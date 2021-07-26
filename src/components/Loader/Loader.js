@@ -1,17 +1,14 @@
 import React, { Component } from "react";
 import Loader from "react-loader-spinner";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
+import s from "./Loader.module.css";
 
 class Spinner extends Component {
   render() {
     return (
-      <Loader
-        type="Rings"
-        color="#00BFFF"
-        height={80}
-        width={80}
-        timeout={3000}
-      />
+      <div className={s.Spinner}>
+        <Loader type="Puff" color="#00BFFF" height={200} width={200} />
+      </div>
     );
   }
 }
