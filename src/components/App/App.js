@@ -6,7 +6,7 @@ import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import Spinner from "../Loader/Loader";
 
-import fetchImages from "../pixabay-api";
+import fetchImages from "../../services/pixabay-api";
 
 import "./App.css";
 
@@ -21,13 +21,14 @@ class App extends Component {
   };
 
   componentDidUpdate(prevProps, { searchQuery, page }) {
-    if (searchQuery !== this.state.searchQuery) {
+    if (searchQuery !== this.state.searchQuery || page !== this.state.page) {
       this.getData();
     }
+    this.handleScroll();
 
-    if (page !== this.state.page) {
-      this.getData();
-    }
+    // if (page !== this.state.page) {
+    //   this.getData();
+    // }
   }
 
   toggleModal = () => {
@@ -76,7 +77,7 @@ class App extends Component {
           return { visibleImages: [...visibleImages, ...hits] };
         });
       })
-      .then(this.handleScroll)
+      // .then(this.handleScroll)
       .catch((error) => console.log(error.message))
       .finally(this.toggleLoading);
   };
@@ -89,19 +90,26 @@ class App extends Component {
     return (
       <div className="App">
         <SearchBar onSubmit={this.hadleChangeQuery} />
+        {visibleImages.length === 0 ? (
+          <h2>Enter your request</h2>
+        ) : (
+          <>
+            <ImageGallery
+              images={visibleImages}
+              onClick={this.toggleModal}
+              onItemClick={this.modalContentSet}
+            />
 
-        <ImageGallery
-          images={visibleImages}
-          onClick={this.toggleModal}
-          onItemClick={this.modalContentSet}
-        />
+            {openModal && (
+              <Modal content={modalContent} onBackdrop={this.toggleModal} />
+            )}
+            {isLoading && <Spinner />}
 
-        {openModal && (
-          <Modal content={modalContent} onBackdrop={this.toggleModal} />
+            {btnEnable && (
+              <Button name="Load more" onPress={this.handleNextPage} />
+            )}
+          </>
         )}
-        {isLoading && <Spinner />}
-
-        {btnEnable && <Button name="Load more" onPress={this.handleNextPage} />}
       </div>
     );
   }
